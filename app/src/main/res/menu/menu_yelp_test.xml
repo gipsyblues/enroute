@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+
+xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/search"
+        android:icon="@drawable/magnify"
+        android:title="@string/search_title"
+        app:showAsAction="always"
+        android:showAsAction="always"
+        app:actionViewClass="android.widget.SearchView" />
+
+
+    <item android:id="@+id/switch_view"
+        android:icon="@drawable/map"
+        android:title="@string/switchview"
+        app:showAsAction="always"
+        android:showAsAction="always" />
+
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--tools:context="com.enroute.enroute.MainActivity">-->
+</menu>
