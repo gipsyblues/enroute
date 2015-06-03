@@ -25,13 +25,16 @@ proguard/
 # Log Files
 *.log
 
+# OSX
 .DS_Store
 *.DS_Store
 
-.gradle
-local.properties
-.idea/libraries
-.DS_Store
-build
-.idea/workspace.xml
-.idea/tasks.xml
+# Misc
+*.iml
+.idea/
+
+# .gradle
+# build
+# .idea/libraries
+# .idea/workspace.xml
+# .idea/tasks.xml
