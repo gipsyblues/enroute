@@ -6,7 +6,7 @@
     <ImageView
         android:layout_width="85dp"
         android:layout_height="85dp"
-        android:id="@+id/ivLogo"
+        android:id="@+id/business_logo"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -17,50 +17,47 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tvBusinessName"
+        android:id="@+id/business_name"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/ivLogo"
-        android:layout_toEndOf="@+id/ivLogo"
+        android:layout_toRightOf="@+id/business_logo"
+        android:layout_toEndOf="@+id/business_logo"
         android:textStyle="bold"/>
 
     <ImageView
         android:layout_width="130dp"
         android:layout_height="25dp"
-        android:id="@+id/ivRating"
+        android:id="@+id/business_rating"
         android:src="@drawable/star4_5"
-        android:layout_toRightOf="@+id/ivLogo"
-        android:layout_below="@+id/tvBusinessName"
+        android:layout_toRightOf="@+id/business_logo"
+        android:layout_below="@+id/business_name"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tvPhone"
-        android:layout_toRightOf="@+id/ivLogo"
-        android:layout_below="@+id/ivRating"/>
+        android:id="@+id/business_phone"
+        android:layout_toRightOf="@+id/business_logo"
+        android:layout_below="@+id/business_rating"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/tvAddress1"
-        android:layout_toRightOf="@+id/ivLogo"
-        android:layout_below="@+id/tvPhone"/>
+        android:id="@+id/business_address1"
+        android:layout_toRightOf="@+id/business_logo"
+        android:layout_below="@+id/business_phone"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/tvAddress2"
-        android:layout_toRightOf="@+id/ivLogo"
-        android:layout_below="@+id/tvAddress1" />
+        android:id="@+id/business_address2"
+        android:layout_toRightOf="@+id/business_logo"
+        android:layout_below="@+id/business_address1" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/tvDistance"
+        android:id="@+id/business_distance"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginRight="2dp"/>

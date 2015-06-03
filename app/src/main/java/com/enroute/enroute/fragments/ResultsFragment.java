@@ -24,9 +24,9 @@ public class ResultsFragment extends Fragment {
 
     private MainActivity mParentActivity;
 
-    private ArrayList<Business> businesses;
-    private static BusinessArrayAdapter aBusinesseses;
-    private ListView lvBusinesses;
+    private ArrayList<Business> mBusinessesList;
+    private static BusinessArrayAdapter mBusinessAdapter;
+    private ListView mBusinessesListView;
 
     public static ResultsFragment newInstance() { return new ResultsFragment(); }
 
@@ -51,26 +51,26 @@ public class ResultsFragment extends Fragment {
 
     private void initializeViews() {
         // Get yelp restaurants and display in the list  view
-        lvBusinesses = (ListView) mParentActivity.findViewById(R.id.lvBusinesses);
+        mBusinessesListView = (ListView) mParentActivity.findViewById(R.id.lvBusinesses);
 
         FloatingActionButton fab = (FloatingActionButton) mParentActivity.findViewById(R.id.fab);
-        fab.attachToListView(lvBusinesses);
+        fab.attachToListView(mBusinessesListView);
 
         // Create the arrayList
-        businesses = new ArrayList<>();
+        mBusinessesList = new ArrayList<>();
 
         // Construct the adapter
-        aBusinesseses = mParentActivity.getBusinessArrayAdapter();
+        mBusinessAdapter = mParentActivity.getBusinessArrayAdapter();
 
         // Connect listview to adapter
-        lvBusinesses.setAdapter(aBusinesseses);
+        mBusinessesListView.setAdapter(mBusinessAdapter);
 
         // Set onClick listeners
-        lvBusinesses.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mBusinessesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                TextView address1 = (TextView) view.findViewById(R.id.tvAddress1);
-                TextView address2 = (TextView) view.findViewById(R.id.tvAddress2);
+                TextView address1 = (TextView) view.findViewById(R.id.business_address1);
+                TextView address2 = (TextView) view.findViewById(R.id.business_address2);
                 Log.d("DEBUG", address1.getText().toString());
                 Log.d("DEBUG", address2.getText().toString());
                 String fullAddress = address1.getText().toString() + " " + address2.getText().toString();

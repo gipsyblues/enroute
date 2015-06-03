@@ -20,18 +20,18 @@ import java.util.List;
 public class BusinessArrayAdapter extends ArrayAdapter<Business> {
 // Taking the business object and turning them into views
 // that will be displayed in lists
-    TextView tvBusinessName;
-    TextView tvPhone;
-    TextView tvCategories;
-    ImageView ivRating;
-    TextView tvAddress1;
-    TextView tvAddress2;
-    ImageView ivLogo;
-    TextView tvDistance;
+    TextView mBusinessNameText;
+    TextView mPhoneText;
+    TextView mCategoriesText;
+    ImageView mRatingImage;
+    TextView mAddress1Text;
+    TextView mAddress2Text;
+    ImageView mLogo;
+    TextView mDistanceText;
 
 
-    public BusinessArrayAdapter(Context context, List<Business> tweets) {
-        super(context, 0, tweets);
+    public BusinessArrayAdapter(Context context, List<Business> businesses) {
+        super(context, 0, businesses);
     }
 
     // override and setup custom template
@@ -48,58 +48,58 @@ public class BusinessArrayAdapter extends ArrayAdapter<Business> {
         }
 
         // find the subview to fill with data in template
-        tvBusinessName = (TextView) convertView.findViewById(R.id.tvBusinessName);
-        //TextView  tvMobile = (TextView) convertView.findViewById(R.id.tvMobile);
-        tvPhone = (TextView) convertView.findViewById(R.id.tvPhone);
-        ivRating = (ImageView) convertView.findViewById(R.id.ivRating);
-        tvAddress1 = (TextView) convertView.findViewById(R.id.tvAddress1);
-        tvAddress2 = (TextView) convertView.findViewById(R.id.tvAddress2);
-        ivLogo = (ImageView) convertView.findViewById(R.id.ivLogo);
-        tvDistance = (TextView) convertView.findViewById(R.id.tvDistance);
+        mBusinessNameText = (TextView) convertView.findViewById(R.id.business_name);
+        //TextView  mMobileText = (TextView) convertView.findViewById(R.id.business_mobile);
+        mPhoneText = (TextView) convertView.findViewById(R.id.business_phone);
+        mRatingImage = (ImageView) convertView.findViewById(R.id.business_rating);
+        mAddress1Text = (TextView) convertView.findViewById(R.id.business_address1);
+        mAddress2Text = (TextView) convertView.findViewById(R.id.business_address2);
+        mLogo = (ImageView) convertView.findViewById(R.id.business_logo);
+        mDistanceText = (TextView) convertView.findViewById(R.id.business_distance);
 
-        tvAddress1.setText(business.getLocation1());
-        tvAddress2.setText(business.getLocation2());
+        mAddress1Text.setText(business.getLocation1());
+        mAddress2Text.setText(business.getLocation2());
 
         double dist = business.getDistance();
         dist = dist / 1609.34;
         BigDecimal bd = new BigDecimal(dist);
         bd = bd.round(new MathContext(2));
         double rounded = bd.doubleValue();
-        tvDistance.setText(Double.toString(rounded) + "mi");
+        mDistanceText.setText(Double.toString(rounded) + "mi");
 
          //populate data into subviews
-        tvBusinessName.setText(business.getBusinessName());
+        mBusinessNameText.setText(business.getBusinessName());
 
-        tvPhone.setText(business.getPhone());
+        mPhoneText.setText(business.getPhone());
 
          //clear out old image
 //        ivProfileImage.setImageResource(android.R.color.transparent);
 //        Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
         Double rating = business.getStars();
         if (rating == 0.5) {
-            ivRating.setImageResource(R.drawable.star0_5);
+            mRatingImage.setImageResource(R.drawable.star0_5);
         } else if (rating == 1) {
-            ivRating.setImageResource(R.drawable.star1);
+            mRatingImage.setImageResource(R.drawable.star1);
         } else if (rating == 1.5) {
-            ivRating.setImageResource(R.drawable.star1_5);
+            mRatingImage.setImageResource(R.drawable.star1_5);
         } else if (rating == 2) {
-            ivRating.setImageResource(R.drawable.star2);
+            mRatingImage.setImageResource(R.drawable.star2);
         } else if (rating == 2.5) {
-            ivRating.setImageResource(R.drawable.star2_5);
+            mRatingImage.setImageResource(R.drawable.star2_5);
         } else if (rating == 3) {
-            ivRating.setImageResource(R.drawable.star3);
+            mRatingImage.setImageResource(R.drawable.star3);
         } else if (rating == 3.5) {
-            ivRating.setImageResource(R.drawable.star3_5);
+            mRatingImage.setImageResource(R.drawable.star3_5);
         } else if (rating == 4) {
-            ivRating.setImageResource(R.drawable.star4);
+            mRatingImage.setImageResource(R.drawable.star4);
         } else if (rating == 4.5) {
-            ivRating.setImageResource(R.drawable.star4_5);
+            mRatingImage.setImageResource(R.drawable.star4_5);
         } else if (rating == 5) {
-            ivRating.setImageResource(R.drawable.star5);
+            mRatingImage.setImageResource(R.drawable.star5);
         } else {
             Log.d("ERROR", "rating value incorrect");
         }
-        Picasso.with(getContext()).load(business.getImageUrl()).into(ivLogo);
+        Picasso.with(getContext()).load(business.getImageUrl()).into(mLogo);
         return convertView;
     }
 
