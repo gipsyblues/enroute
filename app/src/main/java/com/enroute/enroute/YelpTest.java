@@ -33,7 +33,7 @@ public class YelpTest extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_yelp_test);
+        setContentView(R.layout.activity_main);
 
         // Get yelp restaurants and display in the list  view
         lvBusinesses  = (ListView) findViewById(R.id.lvBusinesses);
