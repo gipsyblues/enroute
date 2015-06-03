@@ -10,14 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.enroute.enroute.R;
-import com.enroute.enroute.model.Businesses;
+import com.enroute.enroute.model.Business;
 import com.squareup.picasso.Picasso;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.List;
 
-public class BusinessArrayAdapter extends ArrayAdapter<Businesses> {
+public class BusinessArrayAdapter extends ArrayAdapter<Business> {
 // Taking the business object and turning them into views
 // that will be displayed in lists
     TextView tvBusinessName;
@@ -30,7 +30,7 @@ public class BusinessArrayAdapter extends ArrayAdapter<Businesses> {
     TextView tvDistance;
 
 
-    public BusinessArrayAdapter(Context context, List<Businesses> tweets) {
+    public BusinessArrayAdapter(Context context, List<Business> tweets) {
         super(context, 0, tweets);
     }
 
@@ -39,7 +39,7 @@ public class BusinessArrayAdapter extends ArrayAdapter<Businesses> {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         // Get the business
-        Businesses business = getItem(position);
+        Business business = getItem(position);
         //business = getItem(position);
         // Find or inflate the template
         if (convertView == null) {

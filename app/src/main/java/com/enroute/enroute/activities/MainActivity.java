@@ -29,7 +29,7 @@ import com.enroute.enroute.YelpClient;
 import com.enroute.enroute.adapter.BusinessArrayAdapter;
 import com.enroute.enroute.fragments.MapFragment;
 import com.enroute.enroute.fragments.ResultsFragment;
-import com.enroute.enroute.model.Businesses;
+import com.enroute.enroute.model.Business;
 import com.enroute.enroute.model.Step;
 import com.enroute.enroute.utility.DistanceComparator;
 import com.enroute.enroute.utility.GlobalVars;
@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
 
     private ArrayList<Step> mStepsArray;
     private ArrayList<Step> mFilteredStepsArray;
-    private TreeSet<Businesses> mSortedBusinesses;
+    private TreeSet<Business> mSortedBusinesses;
     private static BusinessArrayAdapter aBusinesseses;
     private ListView lvBusinesses;
 
@@ -101,7 +101,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         // Construct the adapter
-        aBusinesseses = new BusinessArrayAdapter(this, new ArrayList<Businesses>());
+        aBusinesseses = new BusinessArrayAdapter(this, new ArrayList<Business>());
     }
 
     boolean star = true;
@@ -259,19 +259,19 @@ public class MainActivity extends ActionBarActivity {
     private void compileBusiness() {
         Log.d("DEBUG", "compileBusiness entered.");
         DistanceComparator comp = new DistanceComparator();
-        mSortedBusinesses = new TreeSet<Businesses>(comp);
+        mSortedBusinesses = new TreeSet<Business>(comp);
         for (Step x: mFilteredStepsArray) {
             new ReadYelpJSONFeedTask().execute(mMiddleLocation, x.getEndLat(), x.getEndLong());
             //String response = mYelpClient.getBusiness(mMiddleLocation, x.getEndLat(), x.getEndLong());
         }
-//        ArrayList<Businesses> sortedArray = new ArrayList<Businesses>();
+//        ArrayList<Business> sortedArray = new ArrayList<Business>();
 //        sortedArray.addAll(mSortedBusinesses);
-//        for (Businesses x: sortedArray) {
+//        for (Business x: sortedArray) {
 //            System.out.println("Inside SortedBusiness" + x.getBusinessName() + " dis: " + x.getDistance());
 //        }
 //        aBusinesseses.addAll(sortedArray);
         //System.out.println("Size of SortedBusiness: " + mSortedBusinesses.size());
-        //for (Businesses x: mSortedBusinesses) {
+        //for (Business x: mSortedBusinesses) {
         //   System.out.println("Inside SortedBusiness" + x.getBusinessName());
         //}
 
@@ -305,10 +305,10 @@ public class MainActivity extends ActionBarActivity {
             try {
                 JSONObject o1 = new JSONObject(result);
                 JSONArray businesses = o1.getJSONArray("businesses");
-                ArrayList<Businesses> temp = Businesses.fromJSONArray(businesses);
-                for (Businesses x: temp) {
+                ArrayList<Business> temp = Business.fromJSONArray(businesses);
+                for (Business x: temp) {
                    boolean found = false;
-                   for(Businesses y: mSortedBusinesses){
+                   for(Business y: mSortedBusinesses){
                        if (x.getLocation1().compareTo(y.getLocation1())== 0){
                            found = true;
                        }
@@ -322,7 +322,7 @@ public class MainActivity extends ActionBarActivity {
                 }
                 //mSortedBusinesses.addAll(temp);
                 System.out.println("Size of sortedbusiness: " + mSortedBusinesses.size());
-                for (Businesses z: mSortedBusinesses) {
+                for (Business z: mSortedBusinesses) {
                     System.out.println(z.getBusinessName() + " " + z.getDistance());
                 }
             } catch (JSONException e) {
@@ -330,9 +330,9 @@ public class MainActivity extends ActionBarActivity {
                 e.printStackTrace();
                 Log.d("onPostExecute", e.getLocalizedMessage());
             }
-//            ArrayList<Businesses> sortedArray = new ArrayList<Businesses>();
+//            ArrayList<Business> sortedArray = new ArrayList<Business>();
 //            sortedArray.addAll(mSortedBusinesses);
-//            for (Businesses x: sortedArray) {
+//            for (Business x: sortedArray) {
 //                System.out.println("Inside SortedBusiness" + x.getBusinessName() + " dis: " + x.getDistance());
 //            }
 //            aBusinesseses.addAll(sortedArray);

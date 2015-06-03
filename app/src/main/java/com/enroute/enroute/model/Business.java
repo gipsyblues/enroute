@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 
-public class Businesses {
+public class Business {
 
     public String getBusinessName() {
         return businessName;
@@ -94,8 +94,8 @@ public class Businesses {
     // Deserialize the JSON
     // create method to convert business.fromJson({..}") => <business>
 
-    public static Businesses fromJSON(JSONObject jsonObject) {
-        Businesses business = new Businesses();
+    public static Business fromJSON(JSONObject jsonObject) {
+        Business business = new Business();
         String cat= null;
         String category="Food";
         String phone = null;
@@ -146,16 +146,16 @@ public class Businesses {
 
 
     // Pass Json array and ourtout us list of businesss
-    public static ArrayList<Businesses> fromJSONArray(JSONArray jsonArray) {
+    public static ArrayList<Business> fromJSONArray(JSONArray jsonArray) {
 
-        ArrayList<Businesses> businesss = new ArrayList<>();
+        ArrayList<Business> businesss = new ArrayList<>();
 
         // Iterrate the json array and create businesss
         for (int i=0; i< jsonArray.length() ; i++){
 
             try {
                 JSONObject businessJson = jsonArray.getJSONObject(i);
-                Businesses business = Businesses.fromJSON(businessJson);
+                Business business = Business.fromJSON(businessJson);
                 //System.out.println(business.getBusinessName());
 
                 if (business != null ){

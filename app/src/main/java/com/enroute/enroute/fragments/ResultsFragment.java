@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.enroute.enroute.activities.MainActivity;
 import com.enroute.enroute.R;
 import com.enroute.enroute.adapter.BusinessArrayAdapter;
-import com.enroute.enroute.model.Businesses;
+import com.enroute.enroute.model.Business;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class ResultsFragment extends Fragment {
 
     private MainActivity mParentActivity;
 
-    private ArrayList<Businesses> businesses;
+    private ArrayList<Business> businesses;
     private static BusinessArrayAdapter aBusinesseses;
     private ListView lvBusinesses;
 
