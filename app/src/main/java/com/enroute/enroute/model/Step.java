@@ -1,5 +1,6 @@
 package com.enroute.enroute.model;
 
+import com.enroute.enroute.utility.GlobalVars;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -7,119 +8,73 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-
 public class Step {
 
-    public double getStartLong() {
-        return startlong;
-    }
-
-    public void setStartLong(double startlong) {
-        this.startlong = startlong;
-    }
-
-    public double getStartLat() {
-        return startlat;
-    }
-
-    public void setStartLat(double startlat) {
-        this.startlat = startlat;
-    }
-
-    public double getEndLong() {
-        return endlong;
-    }
-
-    public void setEndLong(double endlong) {
-        this.endlong = endlong;
-    }
-
-    public double getEndLat() {
-        return endlat;
-    }
-
-    public void setEndLat(double endlat) {
-        this.endlat = endlat;
-    }
+    private int distance;
+    private double endLat;
+    private double endLong;
+    private double startLat;
+    private double startLong;
 
     public int getDistance() {
         return distance;
     }
 
-    public void setDistance(int distance) {
-        this.distance = distance;
+    public double getEndLat() {
+        return endLat;
     }
 
-    //List out the attributes
-    private int distance;
-    //private static String ratingImageUrl;
-    private double startlong;
-    private double startlat;
-    private double endlong;
-    private double endlat;
+    public double getEndLong() {
+        return endLong;
+    }
 
+    public double getStartLat() {
+        return startLat;
+    }
 
+    public double getStartLong() {
+        return startLong;
+    }
 
-    // Deserialize the JSON
-    // create method to convert business.fromJson({..}") => <business>
-
+    // Convert JSONObject to a Step Object
     public static Step fromJSON(JSONObject jsonObject) {
         Step step = new Step();
-
-        // Extract the values from the json, store them
-
         try {
-
-            step.distance = jsonObject.getJSONObject("distance").getInt("value");
-            step.startlong = jsonObject.getJSONObject("start_location").getDouble("lng");
-            step.startlat = jsonObject.getJSONObject("start_location").getDouble("lat");
-            step.endlong = jsonObject.getJSONObject("end_location").getDouble("lng");
-            step.endlat = jsonObject.getJSONObject("end_location").getDouble("lat");
-
-        } catch (JSONException e ){
+            step.distance = jsonObject
+                    .getJSONObject(GlobalVars.MAP_DISTANCE).getInt(GlobalVars.MAP_VALUE);
+            step.startLong = jsonObject
+                    .getJSONObject(GlobalVars.MAP_START_LOC).getDouble(GlobalVars.MAP_LONG);
+            step.startLat = jsonObject
+                    .getJSONObject(GlobalVars.MAP_START_LOC).getDouble(GlobalVars.MAP_LAT);
+            step.endLong = jsonObject
+                    .getJSONObject(GlobalVars.MAP_END_LOC).getDouble(GlobalVars.MAP_LONG);
+            step.endLat = jsonObject
+                    .getJSONObject(GlobalVars.MAP_END_LOC).getDouble(GlobalVars.MAP_LAT);
+        } catch (JSONException e){
             e.printStackTrace();
-
         }
-
-        // Return the business object
         return step;
-
     }
 
-
-    // Pass Json array and ourtout us list of businesss
+    // Convert JSONArray to an ArrayList of Steps
     public static ArrayList<Step> fromJSONArray(JSONObject jsonObject) {
-        ArrayList<Step> steps = new ArrayList<Step>();
-        JSONArray jsonsteplist = null;
+        ArrayList<Step> stepsList = new ArrayList<>();
+        JSONArray jsonArrayObject;
         try {
-            jsonsteplist = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONArray("steps");
+            jsonArrayObject = jsonObject
+                    .getJSONArray(GlobalVars.MAP_ROUTES).getJSONObject(0)
+                    .getJSONArray(GlobalVars.MAP_LEGS).getJSONObject(0)
+                    .getJSONArray(GlobalVars.MAP_STEPS);
+            for (int i = 0; i < jsonArrayObject.length(); i++) {
+                JSONObject jsonStep = jsonArrayObject.getJSONObject(i);
+                Step step = Step.fromJSON(jsonStep);
+                if (step != null) {
+                    stepsList.add(step);
+                }
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        // Iterrate the json array and create businesss
-        System.out.println(jsonsteplist.length());
-        for (int i=0; i < jsonsteplist.length() ; i++){
-
-            try {
-                JSONObject jsonstep = jsonsteplist.getJSONObject(i);
-
-                Step stepz = Step.fromJSON(jsonstep);
-
-                if (stepz != null ){
-                    steps.add(stepz);
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-                continue;
-            }
-
-        }
-
-        // return the finished list
-        return steps;
-
+        return stepsList;
     }
-
-
 }

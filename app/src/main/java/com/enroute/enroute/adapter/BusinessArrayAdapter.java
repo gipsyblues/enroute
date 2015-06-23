@@ -40,11 +40,9 @@ public class BusinessArrayAdapter extends ArrayAdapter<Business> {
 
         // Get the business
         Business business = getItem(position);
-        //business = getItem(position);
         // Find or inflate the template
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_restaurant, parent, false);
-
         }
 
         // find the subview to fill with data in template
@@ -57,8 +55,8 @@ public class BusinessArrayAdapter extends ArrayAdapter<Business> {
         mLogo = (ImageView) convertView.findViewById(R.id.business_logo);
         mDistanceText = (TextView) convertView.findViewById(R.id.business_distance);
 
-        mAddress1Text.setText(business.getLocation1());
-        mAddress2Text.setText(business.getLocation2());
+        mAddress1Text.setText(business.getLocationLine1());
+        mAddress2Text.setText(business.getLocationLine2());
 
         double dist = business.getDistance();
         dist = dist / 1609.34;

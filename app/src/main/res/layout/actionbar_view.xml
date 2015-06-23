@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/yellow"
+    android:paddingTop="@dimen/actionbar_padding_vertical"
+    android:paddingBottom="@dimen/actionbar_padding_vertical"
+    android:paddingLeft="@dimen/actionbar_padding_left"
+    android:paddingRight="@dimen/actionbar_padding_right"
+    android:gravity="center_vertical" >
+
+    <TextView
+        android:id="@+id/searchField"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:drawableLeft="@drawable/search_icon_nocircle"
+        android:drawablePadding="@dimen/actionbar_drawable_edittext_padding"
+        android:gravity="center_vertical"
+        android:text="@string/actionbar_search"
+        android:textSize="@dimen/text_size" />
+
+    <ImageButton
+        android:id="@+id/mapButton"
+        android:layout_width="@dimen/actionbar_icon_size"
+        android:layout_height="@dimen/actionbar_icon_size"
+        android:background="@android:color/transparent"
+        android:paddingLeft="10dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/map" />
+
+</LinearLayout>

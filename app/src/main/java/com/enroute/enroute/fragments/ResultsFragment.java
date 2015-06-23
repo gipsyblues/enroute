@@ -24,18 +24,19 @@ public class ResultsFragment extends Fragment {
 
     private MainActivity mParentActivity;
 
-    private ArrayList<Business> mBusinessesList;
     private static BusinessArrayAdapter mBusinessAdapter;
     private ListView mBusinessesListView;
 
-    public static ResultsFragment newInstance() { return new ResultsFragment(); }
+    public static ResultsFragment newInstance() {
+        return new ResultsFragment();
+    }
 
     public ResultsFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         mParentActivity = (MainActivity) getActivity();
         // Inflate the layout for this fragment
@@ -46,7 +47,6 @@ public class ResultsFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initializeViews();
-
     }
 
     private void initializeViews() {
@@ -55,9 +55,6 @@ public class ResultsFragment extends Fragment {
 
         FloatingActionButton fab = (FloatingActionButton) mParentActivity.findViewById(R.id.fab);
         fab.attachToListView(mBusinessesListView);
-
-        // Create the arrayList
-        mBusinessesList = new ArrayList<>();
 
         // Construct the adapter
         mBusinessAdapter = mParentActivity.getBusinessArrayAdapter();
@@ -71,15 +68,11 @@ public class ResultsFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 TextView address1 = (TextView) view.findViewById(R.id.business_address1);
                 TextView address2 = (TextView) view.findViewById(R.id.business_address2);
-                Log.d("DEBUG", address1.getText().toString());
-                Log.d("DEBUG", address2.getText().toString());
-                String fullAddress = address1.getText().toString() + " " + address2.getText().toString();
-                Log.d("DEBUG", fullAddress);
+                String fullAddress = address1
+                        .getText().toString() + " " + address2.getText().toString();
                 fullAddress = mParentActivity.cleanLocationString(fullAddress);
-                Log.d("DEBUG", fullAddress);
                 mParentActivity.startNavigation(fullAddress);
             }
         });
     }
-
 }

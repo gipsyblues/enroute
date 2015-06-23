@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Enroute</string>
 
+    <string name="actionbar_search">Search</string>
+
+    <color name="yellow">#F7DD9E</color>
+    <color name="transparentBlack">#99000000</color>
+    <color name="white">#FFFFFF</color>
+
     <string name="start_location">Starting Point</string>
     <string name="current_location">Using Your Current Location</string>
     <string name="middle_location">Place of Interest</string>
@@ -13,7 +19,6 @@
 
     <string name="search_title">Location...</string>
     <color name="background">#9FA8DA</color>
-    <color name="white">#FFFFFF</color>
     <color name="accent">#FFFFFF</color>
     <color name="button">#C5CAE9</color>
 </resources>

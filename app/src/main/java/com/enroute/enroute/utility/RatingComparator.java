@@ -17,6 +17,4 @@ public class RatingComparator implements Comparator<Business> {
             return 1;
         }
     }
-
-
 }

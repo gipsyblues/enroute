@@ -9,6 +9,9 @@
         <item name="android:displayOptions">showHome|homeAsUp|showTitle</item>
         <item name="displayOptions">showHome|homeAsUp|showTitle</item>
         <item name="android:icon">@android:color/transparent</item>
+        <item name="android:windowActionBarOverlay">false</item>
+        <!-- Support library attribute for compatibility -->
+        <item name="windowActionBarOverlay">false</item>
     </style>
 
 </resources>

@@ -12,7 +12,6 @@
         android:hint="@string/search"
         android:minWidth="150dp" >
 
-        <requestFocus />
     </EditText>
 
     <Button

@@ -11,13 +11,17 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.SearchView;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -28,32 +32,29 @@ import com.enroute.enroute.R;
 import com.enroute.enroute.YelpClient;
 import com.enroute.enroute.adapter.BusinessArrayAdapter;
 import com.enroute.enroute.fragments.MapFragment;
-import com.enroute.enroute.fragments.ResultsFragment;
+import com.enroute.enroute.fragments.SearchFragment;
 import com.enroute.enroute.model.Business;
 import com.enroute.enroute.model.Step;
 import com.enroute.enroute.utility.DistanceComparator;
-import com.enroute.enroute.utility.GlobalVars;
 import com.enroute.enroute.utility.Utility;
 import com.enroute.enroute.utility.VolleyInstance;
-import com.melnykov.fab.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
 
 public class MainActivity extends ActionBarActivity {
 
     private final String DIRECTIONS_API_KEY = "AIzaSyBOfq7knvV8qWFG2eztBeL7NKCnNYmB6mU";
-    private final String DIRECTIONS_BASE_URL = "https://maps.googleapis.com/maps/api/directions/json?key=" + DIRECTIONS_API_KEY + "&";
+    private final String DIRECTIONS_BASE_URL =
+            "https://maps.googleapis.com/maps/api/directions/json?key=" + DIRECTIONS_API_KEY + "&";
     private final int POI_NAVIGATION_REQUEST = 1;
     private final String DEFAULT_DESTINATION = "2515 Benvenue Avenue, Berkeley, CA";
 
-    private String mStartLocation;
     private String mMiddleLocation;
     private String mDestinationLocation;
 
@@ -64,73 +65,74 @@ public class MainActivity extends ActionBarActivity {
     private ArrayList<Step> mStepsArray;
     private ArrayList<Step> mFilteredStepsArray;
     private TreeSet<Business> mSortedBusinesses;
-    private static BusinessArrayAdapter aBusinesseses;
-    private ListView lvBusinesses;
+    private static BusinessArrayAdapter aBusinesses;
+    private boolean star = true;
 
-    private SearchView mSearchView;
+
+//    mMiddleLocation = "boba";
+//    mDestinationLocation = DEFAULT_DESTINATION;
+//
+//    cleanLocationStrings();
+//    Utility.replaceFragment(this, ResultsFragment.newInstance(), R.id.container);
+//    String url = getRouteUrlFromCurrentLocation(mDestinationLocation);
+//    sendRouteRequest(url);
+//        if (mDestinationLocation.toUpperCase().equals(GlobalVars.HOME) ||
+//                mDestinationLocation.equals("")) mDestinationLocation = DEFAULT_DESTINATION;
+//
+//FloatingActionButton button = (FloatingActionButton) findViewById(R.id.fab);
+//    button.setOnClickListener(new View.OnClickListener() {
+//        @Override
+//        public void onClick(View view) {
+//            if (star) {
+//                FloatingActionButton btn = (FloatingActionButton)findViewById(R.id.fab);
+//                btn.setImageResource(R.drawable.ruler2);
+//                star = false;
+//            } else {
+//                FloatingActionButton btn = (FloatingActionButton)findViewById(R.id.fab);
+//                btn.setImageResource(R.drawable.star);
+//                star = true;
+//            }
+//        }
+//    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-//        ActionBar bar = getActionBar();
-//        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#9FA8DA")));
-
-
-        Intent intent = getIntent();
-        mStartLocation = intent.getStringExtra(GlobalVars.START_LOC);
-        mMiddleLocation = intent.getStringExtra(GlobalVars.MIDDLE_LOC);
-        mDestinationLocation = intent.getStringExtra(GlobalVars.DEST);
-        if (mStartLocation.equals("")) mStartLocation = GlobalVars.GET_CURRENT_LOCATION;
-        if (mDestinationLocation.toUpperCase().equals(GlobalVars.HOME) ||
-                mDestinationLocation.equals("")) mDestinationLocation = DEFAULT_DESTINATION;
-        cleanLocationStrings();
-
         mRequest = VolleyInstance.getInstance(getApplicationContext());
         mRequestQueue = mRequest.getRequestQueue();
         mYelpClient = new YelpClient(this);
+        aBusinesses = new BusinessArrayAdapter(this, new ArrayList<Business>());
 
-        Utility.replaceFragment(this, ResultsFragment.newInstance(), R.id.container);
+        final ActionBar actionBar = getSupportActionBar();
+        LayoutInflater inflater = (LayoutInflater)
+                this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View customView = inflater.inflate(R.layout.actionbar_view, null);
+        actionBar.setCustomView(customView,
+                new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        Toolbar parent = (Toolbar) customView.getParent();
+        parent.setContentInsetsAbsolute(0, 0);
 
-        if (true || mStartLocation.equals(GlobalVars.GET_CURRENT_LOCATION)) {
-            getRouteFromCurrentLocation(mDestinationLocation);
-        } else {
-            getRoute(mStartLocation, mDestinationLocation);
-        }
-
-        // Construct the adapter
-        aBusinesseses = new BusinessArrayAdapter(this, new ArrayList<Business>());
+        final FragmentActivity activity = this;
+        TextView searchField = (TextView) customView.findViewById(R.id.searchField);
+        searchField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getSupportActionBar().hide();
+                Utility.backStackFragment(activity, SearchFragment.newInstance(), R.id.container, "LOL");
+            }
+        });
     }
-
-    boolean star = true;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.fab);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (star) {
-                    FloatingActionButton btn = (FloatingActionButton)findViewById(R.id.fab);
-                    btn.setImageResource(R.drawable.ruler2);
-                    star = false;
-                } else {
-                    FloatingActionButton btn = (FloatingActionButton)findViewById(R.id.fab);
-                    btn.setImageResource(R.drawable.star);
-                    star = true;
-                }
-            }
-        });
-
-
-        MenuItem searchViewItem = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) searchViewItem.getActionView();
-        String searchtext = searchView.getQuery().toString();
-
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        MenuItem searchViewItem = menu.findItem(R.id.search);
+//        SearchView searchView = (SearchView) searchViewItem.getActionView();
+//        String searchtext = searchView.getQuery().toString();
         return true;
     }
 
@@ -165,6 +167,9 @@ public class MainActivity extends ActionBarActivity {
         return mRequestQueue;
     }
 
+    public BusinessArrayAdapter getBusinessArrayAdapter() {
+        return aBusinesses;
+    }
 
     /**
      *
@@ -174,43 +179,44 @@ public class MainActivity extends ActionBarActivity {
     public String cleanLocationString(String location) {
         return location.trim().replace(" ", "+");
     }
+
     private void cleanLocationStrings() {
-        mStartLocation = mStartLocation.trim().replace(" ", "+");
-        mMiddleLocation = mMiddleLocation.trim().replace(" ", "+");
-        mDestinationLocation = mDestinationLocation.trim().replace(" ", "+");
+        mMiddleLocation = cleanLocationString(mMiddleLocation);
+        mDestinationLocation = cleanLocationString(mDestinationLocation);
     }
 
     private Location getLastLocation() {
-        return ((LocationManager) getSystemService(Context.LOCATION_SERVICE)).getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        return ((LocationManager) getSystemService(Context.LOCATION_SERVICE))
+                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
     }
 
-    private void getRouteFromCurrentLocation(String destination) {
+    private String getRouteUrlFromCurrentLocation(String destination) {
         Location origin = getLastLocation();
         if (origin == null) {
             Log.d("DEBUG", "origin is null."); // TODO: Fix this
-            mStartLocation = "260+Homer+Avenue,+Palo+Alto,+CA";
-            getRoute(mStartLocation, destination);
+            String startLocation = "260+Homer+Avenue,+Palo+Alto,+CA";
+            return getRouteUrl(startLocation, destination);
         } else {
-            getRoute(origin, destination);
+            return getRouteUrl(origin, destination);
         }
     }
 
-    private void getRoute(Location origin, String destination) {
-        // String destinationPlaceholder = "2515+Benvenue+Avenue,+Berkeley";
-        String originLatLong = String.valueOf(origin.getLatitude()) + "," + String.valueOf(origin.getLongitude());
+    private String getRouteUrl(Location origin, String destination) {
+        String originLatLong = String.valueOf(origin.getLatitude()) + ","
+                + String.valueOf(origin.getLongitude());
         Log.d("DEBUG", "Origin lat/long: " + originLatLong);
 
         String url = DIRECTIONS_BASE_URL + "origin=" + originLatLong +
                 "&destination=" + destination +
                 "&sensor=True";
-        sendRouteRequest(url);
+        return url;
     }
 
-    private void getRoute(String origin, String destination) {
+    private String getRouteUrl(String origin, String destination) {
         String url = DIRECTIONS_BASE_URL + "origin=" + origin +
                 "&destination=" + destination +
                 "&sensor=False";
-        sendRouteRequest(url);
+        return url;
     }
 
     private void sendRouteRequest(String url) {
@@ -241,12 +247,13 @@ public class MainActivity extends ActionBarActivity {
     }
 
     /**
-     * Filtering Google Direction Steps and accessing Yelp API
+     *
+     * Filtering Google Direction Steps
+     *
      */
-
     private void filterSteps() {
         int counter = 0; //counter for 5 miles.
-        mFilteredStepsArray = new ArrayList<Step>();
+        mFilteredStepsArray = new ArrayList<>();
         for (Step x: mStepsArray) {
             counter -= x.getDistance();
             if (counter <= 0) {
@@ -256,29 +263,18 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     *
+     * Accessing Yelp API
+     *
+     */
     private void compileBusiness() {
         Log.d("DEBUG", "compileBusiness entered.");
         DistanceComparator comp = new DistanceComparator();
         mSortedBusinesses = new TreeSet<Business>(comp);
         for (Step x: mFilteredStepsArray) {
             new ReadYelpJSONFeedTask().execute(mMiddleLocation, x.getEndLat(), x.getEndLong());
-            //String response = mYelpClient.getBusiness(mMiddleLocation, x.getEndLat(), x.getEndLong());
         }
-//        ArrayList<Business> sortedArray = new ArrayList<Business>();
-//        sortedArray.addAll(mSortedBusinesses);
-//        for (Business x: sortedArray) {
-//            System.out.println("Inside SortedBusiness" + x.getBusinessName() + " dis: " + x.getDistance());
-//        }
-//        aBusinesseses.addAll(sortedArray);
-        //System.out.println("Size of SortedBusiness: " + mSortedBusinesses.size());
-        //for (Business x: mSortedBusinesses) {
-        //   System.out.println("Inside SortedBusiness" + x.getBusinessName());
-        //}
-
-    }
-
-    public BusinessArrayAdapter getBusinessArrayAdapter() {
-        return aBusinesseses;
     }
 
     private class ReadYelpJSONFeedTask extends AsyncTask<Object, Void, String> {
@@ -296,20 +292,19 @@ public class MainActivity extends ActionBarActivity {
                 Log.v("readJSONFeed  response ", response);
             }
             return response;
-            //return readJSONFeed(urls[0]);
         }
+
         @TargetApi(Build.VERSION_CODES.HONEYCOMB)
         protected void onPostExecute(String result) {
             Log.v("Result ", String.valueOf(result));
-            HashSet<String> already = new HashSet<String>();
             try {
                 JSONObject o1 = new JSONObject(result);
                 JSONArray businesses = o1.getJSONArray("businesses");
                 ArrayList<Business> temp = Business.fromJSONArray(businesses);
                 for (Business x: temp) {
                    boolean found = false;
-                   for(Business y: mSortedBusinesses){
-                       if (x.getLocation1().compareTo(y.getLocation1())== 0){
+                   for (Business y: mSortedBusinesses){
+                       if (x.getLocationLine1().compareTo(y.getLocationLine1())== 0){
                            found = true;
                        }
                    }
@@ -317,11 +312,10 @@ public class MainActivity extends ActionBarActivity {
                        found = true;
                    }
                    if (!found) {
-                       aBusinesseses.add(x);
+                       aBusinesses.add(x);
                    }
                 }
-                //mSortedBusinesses.addAll(temp);
-                System.out.println("Size of sortedbusiness: " + mSortedBusinesses.size());
+                System.out.println("Size of sorted business: " + mSortedBusinesses.size());
                 for (Business z: mSortedBusinesses) {
                     System.out.println(z.getBusinessName() + " " + z.getDistance());
                 }
@@ -330,16 +324,8 @@ public class MainActivity extends ActionBarActivity {
                 e.printStackTrace();
                 Log.d("onPostExecute", e.getLocalizedMessage());
             }
-//            ArrayList<Business> sortedArray = new ArrayList<Business>();
-//            sortedArray.addAll(mSortedBusinesses);
-//            for (Business x: sortedArray) {
-//                System.out.println("Inside SortedBusiness" + x.getBusinessName() + " dis: " + x.getDistance());
-//            }
-//            aBusinesseses.addAll(sortedArray);
-
-            // try
-        } // post
-    } //read
+        }
+    }
 
     /**
      *
@@ -368,7 +354,6 @@ public class MainActivity extends ActionBarActivity {
         boolean isIntentSafe = activities.size() > 0;
 
         if (isIntentSafe) startActivityForResult(gmapsIntent, POI_NAVIGATION_REQUEST);
-        // startActivity(gmapsIntent);
     }
 
     @Override
@@ -380,4 +365,15 @@ public class MainActivity extends ActionBarActivity {
         Log.d("DEBUG", "Why is it hitting this case already.");
     }
 
+    @Override
+    public void onBackPressed() {
+        int numFragments = getSupportFragmentManager().getBackStackEntryCount();
+
+        if (numFragments > 0) {
+            getSupportFragmentManager().popBackStack();
+            getSupportActionBar().show();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

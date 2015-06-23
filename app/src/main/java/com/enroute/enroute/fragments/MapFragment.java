@@ -15,12 +15,13 @@ public class MapFragment extends Fragment {
 
     private MainActivity mParentActivity;
 
-    public static MapFragment newInstance() { return new MapFragment(); }
+    public static MapFragment newInstance() {
+        return new MapFragment();
+    }
 
     public MapFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -30,6 +31,4 @@ public class MapFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
-
-
 }

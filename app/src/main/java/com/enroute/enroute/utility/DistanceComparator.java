@@ -17,6 +17,4 @@ public class DistanceComparator implements Comparator<Business> {
             return 1;
         }
     }
-
-
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.codepath.oauth.OAuthBaseClient;
+import com.enroute.enroute.utility.GlobalVars;
 
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.Api;
@@ -28,9 +29,13 @@ public class YelpClient extends OAuthBaseClient {
     private static final String REST_TOKEN = "E0C_rSfFi-_F0JvuqfDNArDO0P5oG6Ik";
     private static final String REST_TOKEN_SECRET = "ShksC-ByzhQyN142JicbDXiVhs4";
 
+    private static final String YELP_API_URL = "http://api.yelp.com/v2/search";
+
     public YelpClient(Context context) {
-        super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
-        this.service = new ServiceBuilder().provider(YelpApi.class).apiKey(REST_CONSUMER_KEY).apiSecret(REST_CONSUMER_SECRET).build();
+        super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY,
+                REST_CONSUMER_SECRET, REST_CALLBACK_URL);
+        this.service = new ServiceBuilder().provider(YelpApi.class).apiKey(REST_CONSUMER_KEY)
+                .apiSecret(REST_CONSUMER_SECRET).build();
         this.accessToken = new Token(REST_TOKEN, REST_TOKEN_SECRET);
     }
 
@@ -45,12 +50,13 @@ public class YelpClient extends OAuthBaseClient {
 
     public String getBusiness(String term, double latitude, double longitude) {
         try {
-            OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/search");
-            request.addQuerystringParameter("term", term);
-            request.addQuerystringParameter("limit", "6");
-            request.addQuerystringParameter("ll", latitude + "," + longitude);
-            request.addQuerystringParameter("sort","1");
-            request.addQuerystringParameter("radius_filter","8064");
+            OAuthRequest request = new OAuthRequest(Verb.GET, YELP_API_URL);
+            request.addQuerystringParameter(GlobalVars.YELP_SEARCH_TERM, term);
+            request.addQuerystringParameter(GlobalVars.YELP_SEARCH_LIMIT, "6");
+            request.addQuerystringParameter(GlobalVars.YELP_SEARCH_LONG_LAT,
+                    latitude + "," + longitude);
+            request.addQuerystringParameter(GlobalVars.YELP_SEARCH_SORT,"1");
+            request.addQuerystringParameter(GlobalVars.YELP_SEARCH_RADIUS,"8064");
             this.service.signRequest(this.accessToken, request);
             Response response = request.send();
             String s = response.toString();
@@ -60,6 +66,4 @@ public class YelpClient extends OAuthBaseClient {
         }
         return "";
     }
-
-
 }
