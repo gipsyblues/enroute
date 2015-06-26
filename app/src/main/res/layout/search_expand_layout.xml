@@ -20,6 +20,7 @@
             android:paddingLeft="@dimen/actionbar_padding_left" >
 
             <EditText
+                android:id="@+id/search_field"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/edittext_height"
                 android:background="@drawable/edittext_underline"
@@ -35,6 +36,7 @@
                 android:background="@android:color/darker_gray" />
 
             <EditText
+                android:id="@+id/destination_field"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/edittext_height"
                 android:background="@drawable/edittext_underline"
@@ -47,6 +49,7 @@
         </LinearLayout>
 
         <ImageButton
+            android:id="@+id/submit_button"
             android:layout_width="@dimen/submit_button_width"
             android:layout_height="match_parent"
             android:layout_marginLeft="15dp"

@@ -38,6 +38,12 @@ public class Utility {
         }
     }
 
+    public static void showKeyboard(FragmentActivity activity, View layout) {
+        layout.requestFocus();
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+    }
+
     public static void replaceFragment(FragmentActivity activity, Fragment fragment, int id) {
         replaceFragment(activity, fragment, id, null);
     }

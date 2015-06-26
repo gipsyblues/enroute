@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -32,10 +33,12 @@ import com.enroute.enroute.R;
 import com.enroute.enroute.YelpClient;
 import com.enroute.enroute.adapter.BusinessArrayAdapter;
 import com.enroute.enroute.fragments.MapFragment;
+import com.enroute.enroute.fragments.ResultsFragment;
 import com.enroute.enroute.fragments.SearchFragment;
 import com.enroute.enroute.model.Business;
 import com.enroute.enroute.model.Step;
 import com.enroute.enroute.utility.DistanceComparator;
+import com.enroute.enroute.utility.GlobalVars;
 import com.enroute.enroute.utility.Utility;
 import com.enroute.enroute.utility.VolleyInstance;
 
@@ -55,12 +58,11 @@ public class MainActivity extends ActionBarActivity {
     private final int POI_NAVIGATION_REQUEST = 1;
     private final String DEFAULT_DESTINATION = "2515 Benvenue Avenue, Berkeley, CA";
 
-    private String mMiddleLocation;
-    private String mDestinationLocation;
-
     private VolleyInstance mRequest;
     private RequestQueue mRequestQueue;
     private static YelpClient mYelpClient;
+
+    private TextView mSearchField;
 
     private ArrayList<Step> mStepsArray;
     private ArrayList<Step> mFilteredStepsArray;
@@ -69,15 +71,7 @@ public class MainActivity extends ActionBarActivity {
     private boolean star = true;
 
 
-//    mMiddleLocation = "boba";
-//    mDestinationLocation = DEFAULT_DESTINATION;
-//
-//    cleanLocationStrings();
-//    Utility.replaceFragment(this, ResultsFragment.newInstance(), R.id.container);
-//    String url = getRouteUrlFromCurrentLocation(mDestinationLocation);
-//    sendRouteRequest(url);
-//        if (mDestinationLocation.toUpperCase().equals(GlobalVars.HOME) ||
-//                mDestinationLocation.equals("")) mDestinationLocation = DEFAULT_DESTINATION;
+
 //
 //FloatingActionButton button = (FloatingActionButton) findViewById(R.id.fab);
 //    button.setOnClickListener(new View.OnClickListener() {
@@ -116,12 +110,13 @@ public class MainActivity extends ActionBarActivity {
         parent.setContentInsetsAbsolute(0, 0);
 
         final FragmentActivity activity = this;
-        TextView searchField = (TextView) customView.findViewById(R.id.searchField);
-        searchField.setOnClickListener(new View.OnClickListener() {
+        mSearchField = (TextView) customView.findViewById(R.id.searchField);
+        mSearchField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getSupportActionBar().hide();
-                Utility.backStackFragment(activity, SearchFragment.newInstance(), R.id.container, "LOL");
+                Utility.backStackFragment(activity, SearchFragment.newInstance(), R.id.container,
+                        "Search Expand");
             }
         });
     }
@@ -154,6 +149,18 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void startSearch(String search, String destination) {
+        mSearchField.setText(search);
+        Utility.replaceFragment(this, ResultsFragment.newInstance(), R.id.flContainer);
+
+        search = cleanLocationString(search);
+        destination = cleanLocationString(destination);
+        String url = getRouteUrlFromCurrentLocation(destination);
+        sendRouteRequest(url, search);
+        if (destination.toUpperCase().equals(GlobalVars.HOME) ||
+                destination.equals("")) destination = DEFAULT_DESTINATION;
+    }
+
     /**
      *
      * Getter methods.
@@ -178,11 +185,6 @@ public class MainActivity extends ActionBarActivity {
      */
     public String cleanLocationString(String location) {
         return location.trim().replace(" ", "+");
-    }
-
-    private void cleanLocationStrings() {
-        mMiddleLocation = cleanLocationString(mMiddleLocation);
-        mDestinationLocation = cleanLocationString(mDestinationLocation);
     }
 
     private Location getLastLocation() {
@@ -219,7 +221,8 @@ public class MainActivity extends ActionBarActivity {
         return url;
     }
 
-    private void sendRouteRequest(String url) {
+    private void sendRouteRequest(String url, String search) {
+        final String query = search;
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -234,7 +237,7 @@ public class MainActivity extends ActionBarActivity {
                             Log.d("DEBUG", "Step: " + step.toString());
                         }
                         filterSteps();
-                        compileBusiness();
+                        compileBusiness(query);
                         System.out.println("total distance: " + totalDis);
                     }
                 }, new Response.ErrorListener() {
@@ -268,12 +271,12 @@ public class MainActivity extends ActionBarActivity {
      * Accessing Yelp API
      *
      */
-    private void compileBusiness() {
+    private void compileBusiness(String search) {
         Log.d("DEBUG", "compileBusiness entered.");
         DistanceComparator comp = new DistanceComparator();
         mSortedBusinesses = new TreeSet<Business>(comp);
         for (Step x: mFilteredStepsArray) {
-            new ReadYelpJSONFeedTask().execute(mMiddleLocation, x.getEndLat(), x.getEndLong());
+            new ReadYelpJSONFeedTask().execute(search, x.getEndLat(), x.getEndLong());
         }
     }
 
