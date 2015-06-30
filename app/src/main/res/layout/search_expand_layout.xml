@@ -27,6 +27,7 @@
                 android:drawableLeft="@drawable/search_icon_nocircle"
                 android:drawablePadding="@dimen/actionbar_drawable_edittext_padding"
                 android:gravity="center_vertical"
+                android:singleLine="true"
                 android:textCursorDrawable="@drawable/cursor_color"
                 android:textSize="@dimen/text_size" />
 
@@ -43,6 +44,7 @@
                 android:drawableLeft="@drawable/navigation_icon_nocircle"
                 android:drawablePadding="@dimen/actionbar_drawable_edittext_padding"
                 android:gravity="center_vertical"
+                android:singleLine="true"
                 android:textCursorDrawable="@drawable/cursor_color"
                 android:textSize="@dimen/text_size" />
 

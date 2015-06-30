@@ -18,7 +18,8 @@
         android:drawableLeft="@drawable/search_icon_nocircle"
         android:drawablePadding="@dimen/actionbar_drawable_edittext_padding"
         android:gravity="center_vertical"
-        android:text="@string/actionbar_search"
+        android:hint="@string/actionbar_search"
+        android:singleLine="true"
         android:textSize="@dimen/text_size" />
 
     <ImageButton

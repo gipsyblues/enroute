@@ -1,38 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white" >
-
-    <FrameLayout
-        android:id="@+id/flContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:layout_width="@dimen/logo_size"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/enroute_logo_v0" />
-
-        <ListView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/lvBusinesses"
-            android:visibility="gone" />
-
-        <com.melnykov.fab.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_margin="16dp"
-            android:src="@drawable/star"
-            fab:fab_colorNormal="@color/background"
-            fab:fab_colorPressed="@color/white" />
-
-    </FrameLayout>
 
 </RelativeLayout>

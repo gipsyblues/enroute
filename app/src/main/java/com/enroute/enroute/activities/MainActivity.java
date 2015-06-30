@@ -22,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -32,6 +31,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.enroute.enroute.R;
 import com.enroute.enroute.YelpClient;
 import com.enroute.enroute.adapter.BusinessArrayAdapter;
+import com.enroute.enroute.fragments.MainFragment;
 import com.enroute.enroute.fragments.MapFragment;
 import com.enroute.enroute.fragments.ResultsFragment;
 import com.enroute.enroute.fragments.SearchFragment;
@@ -63,14 +63,13 @@ public class MainActivity extends ActionBarActivity {
     private static YelpClient mYelpClient;
 
     private TextView mSearchField;
+    private String mDestination;
 
     private ArrayList<Step> mStepsArray;
     private ArrayList<Step> mFilteredStepsArray;
     private TreeSet<Business> mSortedBusinesses;
     private static BusinessArrayAdapter aBusinesses;
     private boolean star = true;
-
-
 
 //
 //FloatingActionButton button = (FloatingActionButton) findViewById(R.id.fab);
@@ -98,6 +97,8 @@ public class MainActivity extends ActionBarActivity {
         mYelpClient = new YelpClient(this);
         aBusinesses = new BusinessArrayAdapter(this, new ArrayList<Business>());
 
+        Utility.replaceFragment(this, MainFragment.newInstance(), R.id.container, "FragmentMain");
+
         final ActionBar actionBar = getSupportActionBar();
         LayoutInflater inflater = (LayoutInflater)
                 this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -109,6 +110,7 @@ public class MainActivity extends ActionBarActivity {
         Toolbar parent = (Toolbar) customView.getParent();
         parent.setContentInsetsAbsolute(0, 0);
 
+
         final FragmentActivity activity = this;
         mSearchField = (TextView) customView.findViewById(R.id.searchField);
         mSearchField.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +118,7 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 getSupportActionBar().hide();
                 Utility.backStackFragment(activity, SearchFragment.newInstance(), R.id.container,
-                        "Search Expand");
+                        "FragmentSearch");
             }
         });
     }
@@ -150,15 +152,16 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void startSearch(String search, String destination) {
-        mSearchField.setText(search);
-        Utility.replaceFragment(this, ResultsFragment.newInstance(), R.id.flContainer);
-
         search = cleanLocationString(search);
         destination = cleanLocationString(destination);
         String url = getRouteUrlFromCurrentLocation(destination);
-        sendRouteRequest(url, search);
         if (destination.toUpperCase().equals(GlobalVars.HOME) ||
                 destination.equals("")) destination = DEFAULT_DESTINATION;
+        sendRouteRequest(url, search);
+
+        mSearchField.setText(search);
+        mDestination = destination;
+        Utility.replaceFragment(this, ResultsFragment.newInstance(), R.id.container);
     }
 
     /**
@@ -176,6 +179,14 @@ public class MainActivity extends ActionBarActivity {
 
     public BusinessArrayAdapter getBusinessArrayAdapter() {
         return aBusinesses;
+    }
+
+    public TextView getTextField() {
+        return mSearchField;
+    }
+
+    public String getDestinationString() {
+        return mDestination;
     }
 
     /**

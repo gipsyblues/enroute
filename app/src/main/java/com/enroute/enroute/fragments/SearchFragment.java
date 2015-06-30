@@ -4,15 +4,19 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.enroute.enroute.R;
 import com.enroute.enroute.activities.MainActivity;
@@ -45,7 +49,25 @@ public class SearchFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.search_expand_layout, container, false);
 
         mSearchField = (EditText) rootView.findViewById(R.id.search_field);
+        mSearchField.setText(mParentActivity.getTextField().getText());
+        mSearchField.requestFocus();
+        mSearchField.selectAll();
+
         mDestinationField = (EditText) rootView.findViewById(R.id.destination_field);
+        mDestinationField.setText(mParentActivity.getDestinationString());
+        mDestinationField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE
+                        || actionId == EditorInfo.IME_ACTION_SEND
+                        || event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    submit();
+                    return true;
+                }
+                return false;
+            }
+        });
+
         Utility.showKeyboard(mParentActivity, mSearchField);
 
         mImageButton = (ImageButton) rootView.findViewById(R.id.submit_button);
@@ -55,12 +77,9 @@ public class SearchFragment extends Fragment {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         mImageButton.setAlpha(0.7f);
-                        submit();
                         return true;
                     case MotionEvent.ACTION_UP:
                         mImageButton.setAlpha(1f);
-                        Utility.hideKeyboard(mParentActivity, mImageButton);
-                        back();
                         return true;
                 }
                 return false;
@@ -79,6 +98,12 @@ public class SearchFragment extends Fragment {
     }
 
     public void submit() {
+        Utility.hideKeyboard(mParentActivity, mImageButton);
+        back();
+        startSearch();
+    }
+
+    public void startSearch() {
         String search = mSearchField.getText().toString();
         String destination = mDestinationField.getText().toString();
         mParentActivity.startSearch(search, destination);

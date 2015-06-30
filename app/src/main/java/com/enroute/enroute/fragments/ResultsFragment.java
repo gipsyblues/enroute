@@ -53,9 +53,6 @@ public class ResultsFragment extends Fragment {
         // Get yelp restaurants and display in the list  view
         mBusinessesListView = (ListView) mParentActivity.findViewById(R.id.lvBusinesses);
 
-        FloatingActionButton fab = (FloatingActionButton) mParentActivity.findViewById(R.id.fab);
-        fab.attachToListView(mBusinessesListView);
-
         // Construct the adapter
         mBusinessAdapter = mParentActivity.getBusinessArrayAdapter();
 
