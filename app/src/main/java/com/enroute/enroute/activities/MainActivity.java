@@ -41,6 +41,9 @@ import com.enroute.enroute.utility.DistanceComparator;
 import com.enroute.enroute.utility.GlobalVars;
 import com.enroute.enroute.utility.Utility;
 import com.enroute.enroute.utility.VolleyInstance;
+import com.enroute.enroute.utility.RouteBoxer;
+import com.enroute.enroute.utility.RouteBoxer.LatLng;
+import com.enroute.enroute.utility.RouteBoxer.LatLngBounds;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -241,15 +244,18 @@ public class MainActivity extends ActionBarActivity {
                         Log.d("DEBUG", "onResponse hit.");
                         Log.d("DEBUG", "jsonObject:");
                         Log.d("DEBUG", jsonObject.toString());
-                        mStepsArray = Step.fromJSONArray(jsonObject);
-                        int totalDis = 0;
-                        for (Step step : mStepsArray) {
-                            totalDis += step.getDistance();
-                            Log.d("DEBUG", "Step: " + step.toString());
+                        try {
+                            String polyline = jsonObject.getJSONArray("routes")
+                                    .getJSONObject(0)
+                                    .getJSONObject("overview_polyline")
+                                    .getString("points");
+                            Log.d("DEBUG", "POLYLINE\n" + polyline);
+                            List<LatLngBounds> routeBoxes = routeBox(polyline);
+                            Log.d("DEBUG", "ROUTEBOXES");
+                            splitBoxes(routeBoxes);
+                        } catch (Exception e) {
+                            Log.d("DEBUG", e.toString());
                         }
-                        filterSteps();
-                        compileBusiness(query);
-                        System.out.println("total distance: " + totalDis);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -258,6 +264,17 @@ public class MainActivity extends ActionBarActivity {
             }
         });
         mRequestQueue.add(request);
+    }
+
+    private List<LatLngBounds> routeBox(String polyline) {
+        RouteBoxer routeBoxer = new RouteBoxer();
+        List<LatLng> decodedPolyline = routeBoxer.decodePath(polyline);
+        return routeBoxer.box(decodedPolyline, GlobalVars.ROUTE_BOXER_DISTANCE);
+    }
+
+    private void splitBoxes(List<LatLngBounds> routeBoxes) {
+        // TODO
+        Log.d("DEBUG", "CALLED SPLITBOXES");
     }
 
     /**

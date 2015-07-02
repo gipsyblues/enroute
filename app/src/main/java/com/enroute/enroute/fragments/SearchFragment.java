@@ -80,6 +80,7 @@ public class SearchFragment extends Fragment {
                         return true;
                     case MotionEvent.ACTION_UP:
                         mImageButton.setAlpha(1f);
+                        submit();
                         return true;
                 }
                 return false;
