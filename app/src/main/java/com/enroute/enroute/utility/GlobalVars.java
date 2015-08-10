@@ -11,9 +11,6 @@ public class GlobalVars {
     public static final String GET_CURRENT_LOCATION = "CURRENT_LOCATION";
     public static final String HOME = "HOME";
 
-    // RouteBoxer
-    public static final double ROUTE_BOXER_DISTANCE = 0.25;
-
     //Yelp JSON fields
     public static final String YELP_NAME = "name";
     public static final String YELP_DISTANCE = "distance";

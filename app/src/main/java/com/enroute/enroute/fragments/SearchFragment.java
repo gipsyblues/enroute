@@ -1,7 +1,5 @@
 package com.enroute.enroute.fragments;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -9,14 +7,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.enroute.enroute.R;
 import com.enroute.enroute.activities.MainActivity;
@@ -49,7 +43,7 @@ public class SearchFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.search_expand_layout, container, false);
 
         mSearchField = (EditText) rootView.findViewById(R.id.search_field);
-        mSearchField.setText(mParentActivity.getTextField().getText());
+        mSearchField.setText(mParentActivity.getSearchField().getText());
         mSearchField.requestFocus();
         mSearchField.selectAll();
 
@@ -100,8 +94,8 @@ public class SearchFragment extends Fragment {
 
     public void submit() {
         Utility.hideKeyboard(mParentActivity, mImageButton);
-        back();
         startSearch();
+        back();
     }
 
     public void startSearch() {

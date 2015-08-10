@@ -3,7 +3,6 @@ package com.enroute.enroute.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +13,6 @@ import android.widget.TextView;
 import com.enroute.enroute.activities.MainActivity;
 import com.enroute.enroute.R;
 import com.enroute.enroute.adapter.BusinessArrayAdapter;
-import com.enroute.enroute.model.Business;
-import com.melnykov.fab.FloatingActionButton;
-
-import java.util.ArrayList;
 
 
 public class ResultsFragment extends Fragment {
@@ -67,7 +62,7 @@ public class ResultsFragment extends Fragment {
                 TextView address2 = (TextView) view.findViewById(R.id.business_address2);
                 String fullAddress = address1
                         .getText().toString() + " " + address2.getText().toString();
-                fullAddress = mParentActivity.cleanLocationString(fullAddress);
+                fullAddress = mParentActivity.cleanString(fullAddress);
                 mParentActivity.startNavigation(fullAddress);
             }
         });

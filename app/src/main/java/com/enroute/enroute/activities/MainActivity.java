@@ -1,6 +1,5 @@
 package com.enroute.enroute.activities;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,8 +7,6 @@ import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
@@ -29,24 +26,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.enroute.enroute.R;
-import com.enroute.enroute.YelpClient;
 import com.enroute.enroute.adapter.BusinessArrayAdapter;
 import com.enroute.enroute.fragments.MainFragment;
 import com.enroute.enroute.fragments.MapFragment;
 import com.enroute.enroute.fragments.ResultsFragment;
 import com.enroute.enroute.fragments.SearchFragment;
 import com.enroute.enroute.model.Business;
-import com.enroute.enroute.model.Step;
-import com.enroute.enroute.utility.DistanceComparator;
 import com.enroute.enroute.utility.GlobalVars;
 import com.enroute.enroute.utility.Utility;
 import com.enroute.enroute.utility.VolleyInstance;
-import com.enroute.enroute.utility.RouteBoxer;
-import com.enroute.enroute.utility.RouteBoxer.LatLng;
-import com.enroute.enroute.utility.RouteBoxer.LatLngBounds;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -55,21 +44,16 @@ import java.util.TreeSet;
 
 public class MainActivity extends ActionBarActivity {
 
-    private final String DIRECTIONS_API_KEY = "AIzaSyBOfq7knvV8qWFG2eztBeL7NKCnNYmB6mU";
-    private final String DIRECTIONS_BASE_URL =
-            "https://maps.googleapis.com/maps/api/directions/json?key=" + DIRECTIONS_API_KEY + "&";
-    private final int POI_NAVIGATION_REQUEST = 1;
+    private final String DIRECTIONS_BASE_URL = "http://b23d70b9.ngrok.io/api/directions?";
     private final String DEFAULT_DESTINATION = "2515 Benvenue Avenue, Berkeley, CA";
+    private final int POI_NAVIGATION_REQUEST = 1;
 
     private VolleyInstance mRequest;
     private RequestQueue mRequestQueue;
-    private static YelpClient mYelpClient;
 
     private TextView mSearchField;
     private String mDestination;
 
-    private ArrayList<Step> mStepsArray;
-    private ArrayList<Step> mFilteredStepsArray;
     private TreeSet<Business> mSortedBusinesses;
     private static BusinessArrayAdapter aBusinesses;
     private boolean star = true;
@@ -97,7 +81,6 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         mRequest = VolleyInstance.getInstance(getApplicationContext());
         mRequestQueue = mRequest.getRequestQueue();
-        mYelpClient = new YelpClient(this);
         aBusinesses = new BusinessArrayAdapter(this, new ArrayList<Business>());
 
         Utility.replaceFragment(this, MainFragment.newInstance(), R.id.container, "FragmentMain");
@@ -155,12 +138,10 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void startSearch(String search, String destination) {
-        search = cleanLocationString(search);
-        destination = cleanLocationString(destination);
-        String url = getRouteUrlFromCurrentLocation(destination);
+        String url = getRouteUrl(destination, search);
         if (destination.toUpperCase().equals(GlobalVars.HOME) ||
                 destination.equals("")) destination = DEFAULT_DESTINATION;
-        sendRouteRequest(url, search);
+        sendRouteRequest(url);
 
         mSearchField.setText(search);
         mDestination = destination;
@@ -172,19 +153,11 @@ public class MainActivity extends ActionBarActivity {
      * Getter methods.
      *
      */
-    public YelpClient getYelpClient() {
-        return mYelpClient;
-    }
-
-    public RequestQueue getRequestQueue() {
-        return mRequestQueue;
-    }
-
     public BusinessArrayAdapter getBusinessArrayAdapter() {
         return aBusinesses;
     }
 
-    public TextView getTextField() {
+    public TextView getSearchField() {
         return mSearchField;
     }
 
@@ -194,49 +167,46 @@ public class MainActivity extends ActionBarActivity {
 
     /**
      *
-     * Google Directions API Request Methods
+     * Ent Directions API Request Methods
      *
      */
-    public String cleanLocationString(String location) {
+    public String cleanString(String location) {
         return location.trim().replace(" ", "+");
     }
 
-    private Location getLastLocation() {
-        return ((LocationManager) getSystemService(Context.LOCATION_SERVICE))
-                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+    private String getRouteUrl(String destination, String search) {
+        destination = cleanString(destination);
+        search = cleanString(search);
+        String origin = getStartLocation();
+        String url = DIRECTIONS_BASE_URL + "origin=" + origin + "&destination=" + destination
+                + "&search=" + search;
+        return url;
     }
 
-    private String getRouteUrlFromCurrentLocation(String destination) {
-        Location origin = getLastLocation();
+    private String getStartLocation() {
+        Location origin = getCurrentLocation();
         if (origin == null) {
-            Log.d("DEBUG", "origin is null."); // TODO: Fix this
-            String startLocation = "260+Homer+Avenue,+Palo+Alto,+CA";
-            return getRouteUrl(startLocation, destination);
+            // TODO: Implement start location EditText OR popup to prompt user to turn on GPS
+            Log.d("DEBUG", "origin is null.");
+            return "3104+Heitman+Ct,+San+Jose,+CA";
         } else {
-            return getRouteUrl(origin, destination);
+            return String.valueOf(origin.getLatitude()) + ","
+                    + String.valueOf(origin.getLongitude());
         }
     }
 
-    private String getRouteUrl(Location origin, String destination) {
-        String originLatLong = String.valueOf(origin.getLatitude()) + ","
-                + String.valueOf(origin.getLongitude());
-        Log.d("DEBUG", "Origin lat/long: " + originLatLong);
-
-        String url = DIRECTIONS_BASE_URL + "origin=" + originLatLong +
-                "&destination=" + destination +
-                "&sensor=True";
-        return url;
+    private Location getCurrentLocation() {
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        List<String> providers = locationManager.getAllProviders();
+        Location location;
+        for (String provider : providers) {
+            location = locationManager.getLastKnownLocation(provider);
+            if (location != null) return location;
+        }
+        return null;
     }
 
-    private String getRouteUrl(String origin, String destination) {
-        String url = DIRECTIONS_BASE_URL + "origin=" + origin +
-                "&destination=" + destination +
-                "&sensor=False";
-        return url;
-    }
-
-    private void sendRouteRequest(String url, String search) {
-        final String query = search;
+    private void sendRouteRequest(final String url) {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -245,117 +215,20 @@ public class MainActivity extends ActionBarActivity {
                         Log.d("DEBUG", "jsonObject:");
                         Log.d("DEBUG", jsonObject.toString());
                         try {
-                            String polyline = jsonObject.getJSONArray("routes")
-                                    .getJSONObject(0)
-                                    .getJSONObject("overview_polyline")
-                                    .getString("points");
-                            Log.d("DEBUG", "POLYLINE\n" + polyline);
-                            List<LatLngBounds> routeBoxes = routeBox(polyline);
-                            Log.d("DEBUG", "ROUTEBOXES");
-                            splitBoxes(routeBoxes);
+
                         } catch (Exception e) {
                             Log.d("DEBUG", e.toString());
                         }
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.d("DEBUG", "onErrorResponse hit. Error: " + volleyError.toString());
-            }
-        });
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.d("DEBUG", "onErrorResponse hit. Error: " + volleyError.toString());
+                    }
+                }
+        );
         mRequestQueue.add(request);
-    }
-
-    private List<LatLngBounds> routeBox(String polyline) {
-        RouteBoxer routeBoxer = new RouteBoxer();
-        List<LatLng> decodedPolyline = routeBoxer.decodePath(polyline);
-        return routeBoxer.box(decodedPolyline, GlobalVars.ROUTE_BOXER_DISTANCE);
-    }
-
-    private void splitBoxes(List<LatLngBounds> routeBoxes) {
-        // TODO
-        Log.d("DEBUG", "CALLED SPLITBOXES");
-    }
-
-    /**
-     *
-     * Filtering Google Direction Steps
-     *
-     */
-    private void filterSteps() {
-        int counter = 0; //counter for 5 miles.
-        mFilteredStepsArray = new ArrayList<>();
-        for (Step x: mStepsArray) {
-            counter -= x.getDistance();
-            if (counter <= 0) {
-                mFilteredStepsArray.add(x);
-                counter = 8064;
-            }
-        }
-    }
-
-    /**
-     *
-     * Accessing Yelp API
-     *
-     */
-    private void compileBusiness(String search) {
-        Log.d("DEBUG", "compileBusiness entered.");
-        DistanceComparator comp = new DistanceComparator();
-        mSortedBusinesses = new TreeSet<Business>(comp);
-        for (Step x: mFilteredStepsArray) {
-            new ReadYelpJSONFeedTask().execute(search, x.getEndLat(), x.getEndLong());
-        }
-    }
-
-    private class ReadYelpJSONFeedTask extends AsyncTask<Object, Void, String> {
-        protected String doInBackground(Object... param) {
-            Log.d("DEBUG", "doInBackground entered.");
-
-            String term = (String) param[0];
-            Double lat = (Double) param[1];
-            Double lng = (Double) param[2];
-
-            String response = "";
-            Log.d("DEBUG", "Calling yelpClient.getBusiness.");
-            if (Utility.isConnectedToInternet(getApplicationContext())) {
-                response = getYelpClient().getBusiness(term, lat, lng);
-                Log.v("readJSONFeed  response ", response);
-            }
-            return response;
-        }
-
-        @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-        protected void onPostExecute(String result) {
-            Log.v("Result ", String.valueOf(result));
-            try {
-                JSONObject o1 = new JSONObject(result);
-                JSONArray businesses = o1.getJSONArray("businesses");
-                ArrayList<Business> temp = Business.fromJSONArray(businesses);
-                for (Business x: temp) {
-                   boolean found = false;
-                   for (Business y: mSortedBusinesses){
-                       if (x.getLocationLine1().compareTo(y.getLocationLine1())== 0){
-                           found = true;
-                       }
-                   }
-                   if (x.getDistance() > 8064) {
-                       found = true;
-                   }
-                   if (!found) {
-                       aBusinesses.add(x);
-                   }
-                }
-                System.out.println("Size of sorted business: " + mSortedBusinesses.size());
-                for (Business z: mSortedBusinesses) {
-                    System.out.println(z.getBusinessName() + " " + z.getDistance());
-                }
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                Log.d("onPostExecute", e.getLocalizedMessage());
-            }
-        }
     }
 
     /**
@@ -370,7 +243,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void startNavigation(String address) {
         // Just in case
-        address = cleanLocationString(address);
+        address = cleanString(address);
         Uri gmapsIntentUri = Uri.parse("google.navigation:q=" + address);
         launchNavigation(gmapsIntentUri);
     }
