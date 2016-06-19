@@ -10,23 +10,16 @@ import java.util.ArrayList;
 
 public class Business {
 
-    private String businessName;
-    private String categories;
+    private String name;
     private double distance;
     private String imageUrl;
     private String locationLine1;
     private String locationLine2;
-    private String mobileUrl;
     private String phone;
-    private String ratingImageUrl;
-    private double stars;
+    private double rating;
 
-    public String getBusinessName() {
-        return businessName;
-    }
-
-    public String getCategories() {
-        return categories;
+    public String getName() {
+        return name;
     }
 
     public double getDistance() {
@@ -45,34 +38,23 @@ public class Business {
         return locationLine2;
     }
 
-    public String getMobileUrl() {
-        return mobileUrl;
-    }
-
     public String getPhone() {
         return phone;
     }
 
-    public String getRatingImageUrl() {
-        return ratingImageUrl;
-    }
-
-    public double getStars() {
-        return stars;
+    public double getRating() {
+        return rating;
     }
 
     // Convert JSONObject to a Business object
     public static Business fromJSON(JSONObject jsonObject) {
-        Business business = new Business();
-        String category;
         try {
-            business.businessName = jsonObject.getString(GlobalVars.YELP_NAME);
-            business.distance = jsonObject.getDouble(GlobalVars.YELP_DISTANCE);
+            Business business = new Business();
+            business.name = jsonObject.getString(GlobalVars.YELP_NAME);
+            business.distance = jsonObject.getDouble(GlobalVars.ENT_DISTANCE);
             business.imageUrl = jsonObject.getString(GlobalVars.YELP_IMG_URL);
-            business.mobileUrl = jsonObject.getString(GlobalVars.YELP_MOBILE_URL);
             business.phone = jsonObject.getString(GlobalVars.YELP_PHONE);
-            business.ratingImageUrl = jsonObject.getString(GlobalVars.YELP_RATING_URL);
-            business.stars = jsonObject.getDouble(GlobalVars.YELP_RATING);
+            business.rating = jsonObject.getDouble(GlobalVars.YELP_RATING);
             JSONArray jsonLocation = jsonObject
                     .getJSONObject(GlobalVars.YELP_LOCATION).getJSONArray(GlobalVars.YELP_ADDRESS);
             business.locationLine1 = jsonLocation.getString(0);
@@ -83,34 +65,27 @@ public class Business {
             } else {
                 business.locationLine2 = jsonLocation.getString(2);
             }
-            try {
-                String categoryString = jsonObject.getString(GlobalVars.YELP_CATEGORIES);
-                int ind = categoryString.indexOf(',');
-                category = categoryString.substring(3, ind - 1);
-            } catch (Exception e) {
-                category = "";
-            }
-            business.categories = category;
+            return business;
         } catch (JSONException e){
             e.printStackTrace();
         }
-        return business;
+        return null;
     }
 
     // Convert JSONArray to an ArrayList of Businesses
     public static ArrayList<Business> fromJSONArray(JSONArray jsonArray) {
-        ArrayList<Business> businessesList = new ArrayList<>();
+        ArrayList<Business> businessList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++){
             try {
                 JSONObject jsonBusiness = jsonArray.getJSONObject(i);
                 Business business = Business.fromJSON(jsonBusiness);
                 if (business != null ){
-                    businessesList.add(business);
+                    businessList.add(business);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return businessesList;
+        return businessList;
     }
 }

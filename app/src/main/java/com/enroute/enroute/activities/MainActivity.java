@@ -14,8 +14,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -28,7 +26,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.enroute.enroute.R;
 import com.enroute.enroute.adapter.BusinessArrayAdapter;
 import com.enroute.enroute.fragments.MainFragment;
-import com.enroute.enroute.fragments.MapFragment;
 import com.enroute.enroute.fragments.ResultsFragment;
 import com.enroute.enroute.fragments.SearchFragment;
 import com.enroute.enroute.model.Business;
@@ -36,15 +33,15 @@ import com.enroute.enroute.utility.GlobalVars;
 import com.enroute.enroute.utility.Utility;
 import com.enroute.enroute.utility.VolleyInstance;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 
 public class MainActivity extends ActionBarActivity {
 
-    private final String DIRECTIONS_BASE_URL = "http://b23d70b9.ngrok.io/api/directions?";
+    private final String DIRECTIONS_BASE_URL = "http://dfe15b58.ngrok.io/api/directions?";
     private final String DEFAULT_DESTINATION = "2515 Benvenue Avenue, Berkeley, CA";
     private final int POI_NAVIGATION_REQUEST = 1;
 
@@ -54,10 +51,7 @@ public class MainActivity extends ActionBarActivity {
     private TextView mSearchField;
     private String mDestination;
 
-    private TreeSet<Business> mSortedBusinesses;
-    private static BusinessArrayAdapter aBusinesses;
-    private boolean star = true;
-
+    private ArrayList<Business> mBusinesses;
 //
 //FloatingActionButton button = (FloatingActionButton) findViewById(R.id.fab);
 //    button.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +75,6 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         mRequest = VolleyInstance.getInstance(getApplicationContext());
         mRequestQueue = mRequest.getRequestQueue();
-        aBusinesses = new BusinessArrayAdapter(this, new ArrayList<Business>());
 
         Utility.replaceFragment(this, MainFragment.newInstance(), R.id.container, "FragmentMain");
 
@@ -96,7 +89,6 @@ public class MainActivity extends ActionBarActivity {
         Toolbar parent = (Toolbar) customView.getParent();
         parent.setContentInsetsAbsolute(0, 0);
 
-
         final FragmentActivity activity = this;
         mSearchField = (TextView) customView.findViewById(R.id.searchField);
         mSearchField.setOnClickListener(new View.OnClickListener() {
@@ -104,48 +96,20 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 getSupportActionBar().hide();
                 Utility.backStackFragment(activity, SearchFragment.newInstance(), R.id.container,
-                        "FragmentSearch");
+                        "SearchFragment");
             }
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        MenuItem searchViewItem = menu.findItem(R.id.search);
-//        SearchView searchView = (SearchView) searchViewItem.getActionView();
-//        String searchtext = searchView.getQuery().toString();
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.switch_view) {
-            Utility.replaceFragment(this, MapFragment.newInstance(), R.id.container);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     public void startSearch(String search, String destination) {
+        if (destination.toUpperCase().equals(GlobalVars.HOME) || destination.equals("")) {
+            destination = DEFAULT_DESTINATION;
+        }
         String url = getRouteUrl(destination, search);
-        if (destination.toUpperCase().equals(GlobalVars.HOME) ||
-                destination.equals("")) destination = DEFAULT_DESTINATION;
         sendRouteRequest(url);
 
         mSearchField.setText(search);
         mDestination = destination;
-        Utility.replaceFragment(this, ResultsFragment.newInstance(), R.id.container);
     }
 
     /**
@@ -153,16 +117,16 @@ public class MainActivity extends ActionBarActivity {
      * Getter methods.
      *
      */
-    public BusinessArrayAdapter getBusinessArrayAdapter() {
-        return aBusinesses;
-    }
-
     public TextView getSearchField() {
         return mSearchField;
     }
 
     public String getDestinationString() {
         return mDestination;
+    }
+
+    public ArrayList<Business> getBusinesses() {
+        return mBusinesses;
     }
 
     /**
@@ -215,7 +179,10 @@ public class MainActivity extends ActionBarActivity {
                         Log.d("DEBUG", "jsonObject:");
                         Log.d("DEBUG", jsonObject.toString());
                         try {
-
+                            JSONArray businessList = jsonObject.getJSONArray(GlobalVars.ENT_DATA);
+                            mBusinesses = Business.fromJSONArray(businessList);
+                            Utility.replaceFragment(MainActivity.this,
+                                    ResultsFragment.newInstance(), R.id.container);
                         } catch (Exception e) {
                             Log.d("DEBUG", e.toString());
                         }
@@ -265,6 +232,12 @@ public class MainActivity extends ActionBarActivity {
         // Finished gmaps activity. Reroute to destination!
         // Navigate to 2515
         //startNavigation(37.864984, -122.254763);
+        // TODO: Investigate whether or not Google Maps will return an onActivityResult.
+        // TODO: Investigate if possible to listen to any Google Maps signals or events.
+        // TODO: Investigate prompting user to continue to final destination or cancel
+        //       when they open the app again.
+        // TODO: Investigate a background task that starts another navigation when
+        //       the user gets close to the middle destination.
         Log.d("DEBUG", "requestCode: " + requestCode + " resultCode: " + resultCode);
         Log.d("DEBUG", "Why is it hitting this case already.");
     }

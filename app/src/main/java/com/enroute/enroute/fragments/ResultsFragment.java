@@ -19,7 +19,7 @@ public class ResultsFragment extends Fragment {
 
     private MainActivity mParentActivity;
 
-    private static BusinessArrayAdapter mBusinessAdapter;
+    private static BusinessArrayAdapter mBusinessArrayAdapter;
     private ListView mBusinessesListView;
 
     public static ResultsFragment newInstance() {
@@ -46,13 +46,14 @@ public class ResultsFragment extends Fragment {
 
     private void initializeViews() {
         // Get yelp restaurants and display in the list  view
-        mBusinessesListView = (ListView) mParentActivity.findViewById(R.id.lvBusinesses);
+        mBusinessesListView = (ListView) mParentActivity.findViewById(R.id.business_list_view);
 
         // Construct the adapter
-        mBusinessAdapter = mParentActivity.getBusinessArrayAdapter();
+        mBusinessArrayAdapter = new BusinessArrayAdapter(mParentActivity,
+                mParentActivity.getBusinesses());
 
         // Connect listview to adapter
-        mBusinessesListView.setAdapter(mBusinessAdapter);
+        mBusinessesListView.setAdapter(mBusinessArrayAdapter);
 
         // Set onClick listeners
         mBusinessesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -6,7 +6,7 @@
     <ImageView
         android:layout_width="85dp"
         android:layout_height="85dp"
-        android:id="@+id/business_logo"
+        android:id="@+id/business_icon"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -19,8 +19,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/business_name"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/business_logo"
-        android:layout_toEndOf="@+id/business_logo"
+        android:layout_toRightOf="@+id/business_icon"
+        android:layout_toEndOf="@+id/business_icon"
         android:textStyle="bold"/>
 
     <ImageView
@@ -28,7 +28,7 @@
         android:layout_height="25dp"
         android:id="@+id/business_rating"
         android:src="@drawable/star4_5"
-        android:layout_toRightOf="@+id/business_logo"
+        android:layout_toRightOf="@+id/business_icon"
         android:layout_below="@+id/business_name"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"/>
@@ -37,21 +37,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/business_phone"
-        android:layout_toRightOf="@+id/business_logo"
+        android:layout_toRightOf="@+id/business_icon"
         android:layout_below="@+id/business_rating"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/business_address1"
-        android:layout_toRightOf="@+id/business_logo"
+        android:layout_toRightOf="@+id/business_icon"
         android:layout_below="@+id/business_phone"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/business_address2"
-        android:layout_toRightOf="@+id/business_logo"
+        android:layout_toRightOf="@+id/business_icon"
         android:layout_below="@+id/business_address1" />
 
     <TextView

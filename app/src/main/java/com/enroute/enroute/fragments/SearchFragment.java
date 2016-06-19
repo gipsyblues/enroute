@@ -21,8 +21,6 @@ import com.enroute.enroute.utility.Utility;
  */
 public class SearchFragment extends Fragment {
     private MainActivity mParentActivity;
-
-    private View mBackground;
     private EditText mSearchField;
     private EditText mDestinationField;
     private ImageButton mImageButton;
@@ -81,8 +79,8 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        mBackground = (View) rootView.findViewById(R.id.background);
-        mBackground.setOnClickListener(new View.OnClickListener() {
+        View backgroundView = rootView.findViewById(R.id.background);
+        backgroundView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Utility.hideKeyboard(mParentActivity, mImageButton);

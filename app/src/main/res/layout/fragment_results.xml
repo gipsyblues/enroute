@@ -6,6 +6,6 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/lvBusinesses" />
+        android:id="@+id/business_list_view" />
 
 </FrameLayout>

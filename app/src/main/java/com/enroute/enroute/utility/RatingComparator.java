@@ -9,9 +9,9 @@ import java.util.Comparator;
  */
 public class RatingComparator implements Comparator<Business> {
     public int compare(Business b1, Business b2) {
-        if (b1.getStars() < b2.getStars()) {
+        if (b1.getRating() < b2.getRating()) {
             return -1;
-        } else if (b1.getStars() == b2.getStars()) {
+        } else if (b1.getRating() == b2.getRating()) {
             return 0;
         } else {
             return 1;
